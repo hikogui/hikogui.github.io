@@ -1,0 +1,46 @@
+I've just released HikoGUI-0.8.1 a library for making desktop
+GUI applications with C++.
+
+ - github: <https://github.com/hikogui/hikogui>
+ - website: <https://hikogui.org/>
+
+The biggest changes to the library where:
+ - It is now header-only in preparation for making it module-only.
+ - Removing singleton-like classes like the font-book and gui-system
+   with free functions like, `hi::find_font()`.
+ - Added a Vulkan-triangle example to show how to combine 3D drawing
+   combined with HikoGUI. Spoilers: 3D-draw underneath the GUI and
+   your widget can punch a hole in the GUI to see the drawing.
+ - `constexpr` Unicode O(1) database and algorithms and a new grapheme-string.
+
+I thought it would be interesting to talk about the new grapheme-string.
+
+The `hi::gstring` class is a `std::basic_string<hi::grapheme>`. A grapheme is
+what a user of a language sees as a single character. Of course there
+are limitations if you want to create a `std::char_trait<hi::grapheme>`,
+one of which that it should be convertible to/from an integer, in this
+case an `int64_t`.
+
+HikoGUI uses the `hi::grapheme` to encode the following:
+ - 21 bits: The single code-point or an index to the first code-point
+   of a grapheme table.
+ - 25 bits: For the language, script and region. The language of the
+   text are needed to properly display text on the screen, spell check
+   and text-to-voice.
+ - 5 bits: Phrasing. This is how the text should be formatted or spoken.
+   Inspired by HTML phrasing content, such as 'strong', 'emphasis',
+   'citation'.
+
+If a grapheme is more than one code-point, then the long-grapheme table
+comes into play. The 21-bits are used to index into this fixed-size table
+where the first code-point is located. This entry also contains the
+number of code-points, which are in the next entries. Reading is very fast
+and does not require thread synchronization beyond the initial transfer
+of the index from the writing-thread.
+
+For the implementation of `hi::grapheme` and `std::char_trait<hi::grapheme>`, see:
+ - <https://github.com/hikogui/hikogui/blob/main/src/hikogui/unicode/grapheme.hpp>
+ - <https://github.com/hikogui/hikogui/blob/main/src/hikogui/unicode/gstring.hpp>
+
+In case you are wondering about the O(1) Unicode database lookup, see:
+ - <https://github.com/hikogui/hikogui/blob/main/src/hikogui/unicode/ucd_general_categories.hpp>
