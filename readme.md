@@ -82,6 +82,35 @@ Because we are rendering everything with the GPU we get
 [Wide Color Gamut](https://en.wikipedia.org/wiki/Gamut)
 for free.
 
+Internationalization and Localization
+-------------------------------------
+
+Quite a lot has gone into text rendering and editing. This includes:
+ - Mixed bidirectional text display and editing.
+ - Double bidirectional cursor:
+   * Shows primary and secondary cursor based on last language edited
+   * Each a little flag on the cursor showing the direction of text of that cursor
+ - Dead-character composition support, where the partial composition is visible underneath
+   a the composition cursor.
+ - The language of text-fragments is tracked for:
+   * Proper text rendering such as accurate positioning and kerning,
+     and ligatures, including Arabic (planned)
+   * Spell checking (planned)
+   * Text to speech language and accent selection (planned)
+
+
+It also supports a mirrored UI.
+
+
+I am not sure about IME, I did read something about it and I followed some of the recommendations. But I never tried it or know how well it works. I do handle dead-characters by showing the incomplete composition of a character in the text (the cursor becomes a yellow overwrite cursor). This may need to be extended.
+
+I have not started work on UI automation, I do know one of the requirements on windows is to have 32 bit identifier for objects, so that is right now what I am trying not to violate.
+
+We do not support vertical text, if I understand it correctly from the
+Unicode standard all current languages allow their text to be written
+horizontally even if is not their preferred way. As an extra complication
+it will be difficult to design a UI that looks good between horizontal
+and vertical text modes.
 
 A complete GUI
 --------------
@@ -89,11 +118,11 @@ We want to create a complete GUI with all the features that are needed
 to write desktop and mobile applications:
 
  - localization
- - accessability (not yet)
+ - accessability (planned)
  - high quality text rendering
    + perceptional correct subpixel anti-aliasing
    + kerning
-   + ligatures (not yet)
+   + ligatures (planned)
    + bidirectional text handling
  - theming
  - multi-monitor support
